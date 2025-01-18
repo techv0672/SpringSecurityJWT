@@ -2,23 +2,18 @@ package com.example.demo.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.configuration.MyUSerDetails;
-import com.example.demo.configuration.MyUserDetailsService;
 import com.example.demo.model.JwtToken;
 import com.example.demo.model.LoginDetails;
-import com.example.demo.model.LoginResponse;
+import com.example.demo.service.AdminService;
 import com.example.demo.service.JwtUtil;
-
+import com.example.demo.service.MyUserDetailsService;
 import io.jsonwebtoken.Claims;
 
 @RestController
@@ -30,27 +25,28 @@ public class HelloController {
 	@Autowired
 	JwtUtil jwtService;
 
-	@RequestMapping(value = "/home")
+	@Autowired
+	AdminService adminService;
+
+	@GetMapping(value = "/home")
 	public String home() {
 		return "HOME end point";
 	}
 
-	@RequestMapping(value = "/user")
+	@GetMapping(value = "/user")
 	public String user() {
 		return "USER end point";
 	}
 
-	@GetMapping(value = "/admin")
-	public String admin() {
-		return "ADMIN end point";
+	@GetMapping(value = "/empInfo/{empId}")
+	public String employeeDetails(@PathVariable("empId") int empID) {
+		return adminService.getEmployeeInfo(empID);
 	}
 
 	@PostMapping(value = "/getJwtToken")
 	public String login(@RequestBody LoginDetails loginDetails) {
-		System.out.println("USERNAME ---- :" + loginDetails.getUsername());
-		System.out.println("PASSWORD ---- :" + loginDetails.getPassword());
-		UserDetails user = userDetailsService.loadUserByUsername(loginDetails.getUsername());
 
+		UserDetails user = userDetailsService.loadUserByUsername(loginDetails.getUsername());
 		Map<String, Object> map = new HashMap<>();
 		map.put("username", user.getUsername());
 		map.put("authorities", user.getAuthorities());

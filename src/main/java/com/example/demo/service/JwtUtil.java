@@ -11,7 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class JwtUtil {
-	String secret_key = "viswanath_key";
+	String secret_key = "vi_key";
 
 	public String createJwtToken(Map<String, Object> claims) {
 

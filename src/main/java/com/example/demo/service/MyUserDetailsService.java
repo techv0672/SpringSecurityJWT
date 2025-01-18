@@ -1,4 +1,4 @@
-package com.example.demo.configuration;
+package com.example.demo.service;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.model.MyUSerDetails;
 import com.example.demo.model.UserInfo;
 
 @Service
@@ -20,31 +21,20 @@ public class MyUserDetailsService implements UserDetailsService {
 	@Autowired
 	BCryptPasswordEncoder encoder;
 
+	@Autowired
+	LoginService loginService;
+
 	@Override
 	public MyUSerDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-		Map<String,UserInfo> usersDB=new HashMap<>();
 
-		//System.out.println("Username got: ---->" + username);
-		if (username.equalsIgnoreCase("user1")) {
+		UserInfo userInfo = loginService.getDetailsOfUserFromDB(username);
+		MyUSerDetails userDetails = new MyUSerDetails();
+		userDetails.setUsername(userInfo.getUsername());
+		userDetails.setPassword(userInfo.getPassword());
+		userDetails.setAuthorities(userInfo.getAuthorities());
 
-			MyUSerDetails userDetails = new MyUSerDetails();
-			userDetails.setUsername("user1");
-			userDetails.setPassword(encoder.encode("pwd1"));
-			userDetails.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("ADMIN")));
-			return userDetails;
-		} else if (username.equalsIgnoreCase("user2")) {
+		return userDetails;
 
-			MyUSerDetails userDetails2 = new MyUSerDetails();
-			userDetails2.setUsername("user2");
-			userDetails2.setPassword(encoder.encode("pwd2"));
-			userDetails2.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("DEV")));
-			return userDetails2;
-
-		} else {
-
-			return null;
-		}
 	}
 
 }
